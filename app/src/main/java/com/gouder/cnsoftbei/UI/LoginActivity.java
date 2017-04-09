@@ -1,10 +1,25 @@
+/*
+ * Copyright (c) 2017 Peter Mao
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.gouder.cnsoftbei.UI;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,21 +28,32 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gouder.cnsoftbei.API.LogIn.LogInBuilder;
+import com.gouder.cnsoftbei.API.LogIn.LogInService;
+import com.gouder.cnsoftbei.API.SignUp.SignUpService;
+import com.gouder.cnsoftbei.Entity.IsSignedUpResult;
+import com.gouder.cnsoftbei.Entity.LogInResult;
+import com.gouder.cnsoftbei.Helper.AnimateHelper;
 import com.gouder.cnsoftbei.R;
+import com.gouder.cnsoftbei.Singleton.RetrofitSingleton;
+import com.gouder.cnsoftbei.Singleton.UserSingleton;
 
 import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,12 +61,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @InjectView(R.id.login_progress)
     ProgressBar mProgressView;
-    @InjectView(R.id.et_email)
-    EditText etEmail;
+    @InjectView(R.id.et_phone)
+    EditText etPhone;
     @InjectView(R.id.login_form)
     ScrollView mLoginFormView;
-    @InjectView(R.id.til_email)
-    TextInputLayout tilEmail;
+    @InjectView(R.id.til_phone)
+    TextInputLayout tilPhone;
     @InjectView(R.id.et_password)
     EditText etPassword;
     @InjectView(R.id.til_password)
@@ -49,12 +75,17 @@ public class LoginActivity extends AppCompatActivity {
     Button btnSignInOrRegister;
     @InjectView(R.id.btn_sign_in)
     Button btnSignIn;
+    @InjectView(R.id.tv_ask_if_register)
+    TextView tvAskIfRegister;
 
-    private UserLoginTask mAuthTask = null;
+    private SignUpService signUpService = null;
 
-    private UserIsSignedUpTask isSignedUpTask = null;
+    private LogInService logInService = null;
 
     private Boolean userIsSignedUp = null;
+    private Call<IsSignedUpResult> isSignedUpTask;
+    private Call<LogInResult> logInTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         initBars();
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
-        etEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        etPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 LoginActivity.this.registerOrLogIn();
@@ -76,8 +107,9 @@ public class LoginActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        animate();
+        signUpService = RetrofitSingleton.getInstance().create(SignUpService.class);
+        logInService = RetrofitSingleton.getInstance().create(LogInService.class);
+        AnimateHelper.slideUp(mLoginFormView);
     }
 
     private void hideKeyboard(View textView) {
@@ -86,33 +118,49 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void registerOrLogIn() {
-        hideKeyboard(etEmail);
+        hideKeyboard(etPhone);
         if (isSignedUpTask != null) {
             return;
         }
-        etEmail.setError(null);
-        String email = etEmail.getText().toString();
+        etPhone.setError(null);
+        String phone = etPhone.getText().toString();
         boolean cancel = false;
-        if (TextUtils.isEmpty(email)) {
-            etEmail.setError(getString(R.string.error_field_required));
+        if (TextUtils.isEmpty(phone)) {
+            etPhone.setError(getString(R.string.error_field_required));
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            etEmail.setError(getString(R.string.error_invalid_email));
+        } else if (!isPhoneValid(phone)) {
+            etPhone.setError(getString(R.string.error_invalid_phone));
             cancel = true;
         }
         if (cancel) {
-            etEmail.requestFocus();
+            etPhone.requestFocus();
         } else {
             showProgress(true);
-            isSignedUpTask = new UserIsSignedUpTask(email);
-            isSignedUpTask.execute((Void) null);
+            isSignedUpTask = signUpService.isSignedUp(phone);
+            isSignedUpTask.enqueue(new Callback<IsSignedUpResult>() {
+                @Override
+                public void onResponse(Call<IsSignedUpResult> call, Response<IsSignedUpResult> response) {
+                    IsSignedUpResult result = response.body();
+                    if (result != null && result.getError().getCode() == 0) {
+                        userIsSignedUp = result.getIsSignedUp().getIsSignedUp();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        userIsSignedUp = null;
+                    }
+                    isSignedUpTask = null;
+                    showProgress(false);
+                }
+
+                @Override
+                public void onFailure(Call<IsSignedUpResult> call, Throwable t) {
+                    isSignedUpTask = null;
+                    userIsSignedUp = null;
+                    showProgress(false);
+                }
+            });
         }
     }
 
-    private void animate() {
-        mLoginFormView.startAnimation(AnimationUtils.loadAnimation(this,
-                R.anim.slid_up));
-    }
 
     private void initBars() {
         Window window = getWindow();
@@ -127,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_sign_in_or_register)
-    public void onEmailSignInButtonClicked(View v) {
+    public void onSignInOrRegisterButtonClicked(View v) {
         registerOrLogIn();
     }
 
@@ -136,13 +184,19 @@ public class LoginActivity extends AppCompatActivity {
         attemptLogin();
     }
 
+
+    @OnClick(R.id.tv_ask_if_register)
+    public void onAskIfRegisterClicked(View v) {
+        Toast.makeText(this, "Register", Toast.LENGTH_SHORT).show();
+    }
+
     private void attemptLogin() {
-        hideKeyboard(etEmail);
-        if (mAuthTask != null) {
+        hideKeyboard(etPhone);
+        if (logInTask != null) {
             return;
         }
         etPassword.setError(null);
-        String email = etEmail.getText().toString();
+        String phone = etPhone.getText().toString();
         String password = etPassword.getText().toString();
         boolean cancel = false;
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
@@ -153,13 +207,34 @@ public class LoginActivity extends AppCompatActivity {
             etPassword.requestFocus();
         } else {
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            logInTask = logInService.logIn(new LogInBuilder(phone, password));
+            logInTask.enqueue(new Callback<LogInResult>() {
+                @Override
+                public void onResponse(Call<LogInResult> call, Response<LogInResult> response) {
+                    LogInResult result = response.body();
+                    if (result != null && result.getError().getCode() == 0) {
+                        UserSingleton.getInstance().setUser(result.getUser());
+                        Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
+                        //TODO login success
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    }
+                    showProgress(false);
+                    logInTask = null;
+                }
+
+                @Override
+                public void onFailure(Call<LogInResult> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                    showProgress(false);
+                    logInTask = null;
+                }
+            });
         }
     }
 
-    private boolean isEmailValid(String email) {
-        return Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*").matcher(email).matches();
+    private boolean isPhoneValid(String phone) {
+        return Pattern.compile("^((13[0-9])|(15[^4])|(18[0235-9])|(17[0-8])|(147))\\d{8}$").matcher(phone).matches();
     }
 
     private boolean isPasswordValid(String password) {
@@ -190,93 +265,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         if (userIsSignedUp != null && !show) {
-            tilEmail.setVisibility(userIsSignedUp ? View.GONE : View.VISIBLE);
+            tilPhone.setVisibility(userIsSignedUp ? View.GONE : View.VISIBLE);
             btnSignInOrRegister.setVisibility(userIsSignedUp ? View.GONE : View.VISIBLE);
             tilPassword.setVisibility(userIsSignedUp ? View.VISIBLE : View.GONE);
             btnSignIn.setVisibility(userIsSignedUp ? View.VISIBLE : View.GONE);
-        }
-    }
-
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    private class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            tvAskIfRegister.setVisibility(userIsSignedUp ? View.GONE : View.VISIBLE);
+            if (!userIsSignedUp) {
+                AnimateHelper.nope(tvAskIfRegister);
             }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-//            showProgress(false);
-
-            finish();
-//            if (success) {
-//                finish();
-//            } else {
-////                mPasswordView.setError(getString(R.string.error_incorrect_password));
-////                mPasswordView.requestFocus();
-//            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
-
-    private class UserIsSignedUpTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-
-        UserIsSignedUpTask(String email) {
-            mEmail = email;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            isSignedUpTask = null;
-            userIsSignedUp = success;
-            showProgress(false);
-
-        }
-
-
-        @Override
-        protected void onCancelled() {
-            isSignedUpTask = null;
-            userIsSignedUp = null;
-            showProgress(false);
         }
     }
 

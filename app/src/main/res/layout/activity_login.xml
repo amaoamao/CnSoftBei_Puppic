@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2017 Peter Mao
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -38,27 +54,35 @@
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/til_email"
+                android:id="@+id/til_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/et_password"
                 android:textColorHint="@color/colorWhite">
 
                 <EditText
-                    android:id="@+id/et_email"
+                    android:id="@+id/et_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/sign_in_form_vertical_margin"
                     android:layout_marginTop="@dimen/sign_in_form_vertical_margin"
                     android:backgroundTint="@color/colorWhiteTransparent"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
+                    android:hint="@string/prompt_phone"
+                    android:inputType="phone"
                     android:maxLines="1"
-                    android:singleLine="true"
                     android:textColor="@color/colorWhite" />
 
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:id="@+id/tv_ask_if_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/ask_if_register"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/colorWhiteTransparent"
+                android:visibility="gone" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/til_password"
@@ -75,11 +99,9 @@
                     android:layout_marginTop="@dimen/sign_in_form_vertical_margin"
                     android:backgroundTint="@color/colorWhiteTransparent"
                     android:hint="@string/prompt_password"
-                    android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true"
                     android:textColor="@color/colorWhite" />
 
             </android.support.design.widget.TextInputLayout>
