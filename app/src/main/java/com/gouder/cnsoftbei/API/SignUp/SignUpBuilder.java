@@ -16,19 +16,19 @@
 
 package com.gouder.cnsoftbei.API.SignUp;
 
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.gouder.cnsoftbei.Entity.User;
 
 public class SignUpBuilder {
 
-    @SerializedName("user")
-    @Expose
+
     private User user;
-    @SerializedName("token")
-    @Expose
+
     private String token;
+
+    public SignUpBuilder(User user, String token) {
+        this.user = user;
+        this.token = token;
+    }
 
     public User getUser() {
         return user;

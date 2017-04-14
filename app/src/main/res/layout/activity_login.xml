@@ -38,7 +38,6 @@
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -58,19 +57,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/et_password"
-                android:textColorHint="@color/colorWhite">
+                android:textColorHint="@color/colorWhiteTransparent">
 
                 <EditText
                     android:id="@+id/et_phone"
+                    style="@style/SignInFormEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/sign_in_form_vertical_margin"
-                    android:layout_marginTop="@dimen/sign_in_form_vertical_margin"
-                    android:backgroundTint="@color/colorWhiteTransparent"
                     android:hint="@string/prompt_phone"
                     android:inputType="phone"
-                    android:maxLines="1"
-                    android:textColor="@color/colorWhite" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -79,6 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
+                android:focusable="true"
                 android:text="@string/ask_if_register"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/colorWhiteTransparent"
@@ -88,29 +85,24 @@
                 android:id="@+id/til_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="@color/colorWhite"
+                android:textColorHint="@color/colorWhiteTransparent"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/et_password"
+
+                    style="@style/SignInFormEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/sign_in_form_vertical_margin"
-                    android:layout_marginTop="@dimen/sign_in_form_vertical_margin"
-                    android:backgroundTint="@color/colorWhiteTransparent"
                     android:hint="@string/prompt_password"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:textColor="@color/colorWhite" />
+                    android:inputType="textPassword" />
 
             </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/btn_sign_in_or_register"
                 style="@style/SignInButton"
-                android:layout_marginBottom="@dimen/sign_in_form_vertical_margin"
-                android:layout_marginTop="@dimen/sign_in_form_vertical_margin"
                 android:text="@string/action_sign_in" />
 
             <Button

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Peter Mao
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +14,20 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#529ECB</color>
-    <color name="colorGrey">#9e9e9e</color>
-    <color name="colorLogInActivityBackground">#56bc8a</color>
-    <color name="colorWhiteTransparent">#afffffff</color>
-    <color name="colorGreyTransparent">#50bdbdbd</color>
-    <color name="colorWhite">#FFFFFF</color>
-    <color name="colorHalfTransparent">#33000000</color>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/title_dashboard"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/title_home"
+        app:showAsAction="ifRoom" />
+
+</menu>

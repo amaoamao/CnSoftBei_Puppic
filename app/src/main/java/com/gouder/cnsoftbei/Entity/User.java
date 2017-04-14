@@ -41,6 +41,16 @@ public class User {
     @Expose
     private Integer isAdmin;
 
+    public User(String name, String phone, String psw, String gender) {
+        this.name = name;
+        this.phone = phone;
+        this.psw = psw;
+        this.gender = gender;
+    }
+
+    public User() {
+    }
+
     public String getName() {
         return name;
     }

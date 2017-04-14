@@ -19,12 +19,13 @@ package com.gouder.cnsoftbei.UI;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -48,9 +49,10 @@ import com.gouder.cnsoftbei.Singleton.UserSingleton;
 
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,23 +61,24 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
 
-    @InjectView(R.id.login_progress)
+    public static final int SIGN_UP = 0;
+    @BindView(R.id.login_progress)
     ProgressBar mProgressView;
-    @InjectView(R.id.et_phone)
+    @BindView(R.id.et_phone)
     EditText etPhone;
-    @InjectView(R.id.login_form)
+    @BindView(R.id.login_form)
     ScrollView mLoginFormView;
-    @InjectView(R.id.til_phone)
+    @BindView(R.id.til_phone)
     TextInputLayout tilPhone;
-    @InjectView(R.id.et_password)
+    @BindView(R.id.et_password)
     EditText etPassword;
-    @InjectView(R.id.til_password)
+    @BindView(R.id.til_password)
     TextInputLayout tilPassword;
-    @InjectView(R.id.btn_sign_in_or_register)
+    @BindView(R.id.btn_sign_in_or_register)
     Button btnSignInOrRegister;
-    @InjectView(R.id.btn_sign_in)
+    @BindView(R.id.btn_sign_in)
     Button btnSignIn;
-    @InjectView(R.id.tv_ask_if_register)
+    @BindView(R.id.tv_ask_if_register)
     TextView tvAskIfRegister;
 
     private SignUpService signUpService = null;
@@ -92,29 +95,31 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initBars();
         setContentView(R.layout.activity_login);
-        ButterKnife.inject(this);
-        etPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                LoginActivity.this.registerOrLogIn();
-                return true;
-            }
-        });
-        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                LoginActivity.this.attemptLogin();
-                return true;
-            }
-        });
+        ButterKnife.bind(this);
         signUpService = RetrofitSingleton.getInstance().create(SignUpService.class);
         logInService = RetrofitSingleton.getInstance().create(LogInService.class);
+        animate();
+    }
+
+    private void animate() {
         AnimateHelper.slideUp(mLoginFormView);
     }
 
     private void hideKeyboard(View textView) {
         InputMethodManager inputMethodManager = (InputMethodManager) getApplication().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    @OnEditorAction(R.id.et_password)
+    public boolean onEtPasswordAction() {
+        LoginActivity.this.attemptLogin();
+        return true;
+    }
+
+    @OnEditorAction(R.id.et_phone)
+    public boolean onEtPhoneAction() {
+        LoginActivity.this.registerOrLogIn();
+        return true;
     }
 
     private void registerOrLogIn() {
@@ -143,16 +148,16 @@ public class LoginActivity extends AppCompatActivity {
                     IsSignedUpResult result = response.body();
                     if (result != null && result.getError().getCode() == 0) {
                         userIsSignedUp = result.getIsSignedUp().getIsSignedUp();
+                        isSignedUpTask = null;
+                        showProgress(false);
                     } else {
-                        Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                        userIsSignedUp = null;
+                        onFailure(null, null);
                     }
-                    isSignedUpTask = null;
-                    showProgress(false);
                 }
 
                 @Override
                 public void onFailure(Call<IsSignedUpResult> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, R.string.server_error, Toast.LENGTH_SHORT).show();
                     isSignedUpTask = null;
                     userIsSignedUp = null;
                     showProgress(false);
@@ -175,19 +180,37 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_sign_in_or_register)
-    public void onSignInOrRegisterButtonClicked(View v) {
+    public void onSignInOrRegisterButtonClicked() {
         registerOrLogIn();
+//        userIsSignedUp = false;
+//        showProgress(false);
     }
 
     @OnClick(R.id.btn_sign_in)
-    public void onSignInButtonClicked(View v) {
+    public void onSignInButtonClicked() {
         attemptLogin();
     }
 
 
     @OnClick(R.id.tv_ask_if_register)
-    public void onAskIfRegisterClicked(View v) {
-        Toast.makeText(this, "Register", Toast.LENGTH_SHORT).show();
+    public void onAskIfRegisterClicked() {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        intent.putExtra("phone", etPhone.getText().toString());
+        startActivity(intent);
+        startActivityForResult(intent, SIGN_UP);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SIGN_UP && data != null) {
+            String phone = data.getStringExtra("phone");
+            String psw = data.getStringExtra("psw");
+            etPhone.setText(phone);
+            etPassword.setText(psw);
+            userIsSignedUp = true;
+            attemptLogin();
+        }
     }
 
     private void attemptLogin() {
@@ -214,18 +237,20 @@ public class LoginActivity extends AppCompatActivity {
                     LogInResult result = response.body();
                     if (result != null && result.getError().getCode() == 0) {
                         UserSingleton.getInstance().setUser(result.getUser());
-                        Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
-                        //TODO login success
+                        Toast.makeText(LoginActivity.this, R.string.welcome_back, Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
                     } else {
-                        Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        onFailure(null, null);
                     }
-                    showProgress(false);
-                    logInTask = null;
+
                 }
 
                 @Override
                 public void onFailure(Call<LogInResult> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, "failed", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                    etPassword.setError(getString(R.string.wrong_password));
+                    etPassword.requestFocus();
                     showProgress(false);
                     logInTask = null;
                 }
@@ -245,6 +270,7 @@ public class LoginActivity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
     private void showProgress(final boolean show) {
+        Log.e("TAG", "showProgress(" + show + ")");
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         mLoginFormView.animate().setDuration(shortAnimTime).alpha(
