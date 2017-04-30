@@ -19,20 +19,24 @@ package com.gouder.cnsoftbei.UI;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gouder.cnsoftbei.ApplicationComponent;
+import com.gouder.cnsoftbei.Entity.User;
 import com.gouder.cnsoftbei.R;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     TextView message;
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
+
+    @Inject
+    User user;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -60,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -69,8 +76,12 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         setSupportActionBar(toolbar);
         initBars();
+        Toast.makeText(this, user.getName(), Toast.LENGTH_SHORT).show();
+    }
 
-
+    @Override
+    void injectComponent(ApplicationComponent component) {
+        component.inject(this);
     }
 
     private void animate() {

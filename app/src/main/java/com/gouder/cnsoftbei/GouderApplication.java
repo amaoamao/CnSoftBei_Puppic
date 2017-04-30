@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.gouder.cnsoftbei;
 
-buildscript {
-    repositories {
-        jcenter()
+
+import android.app.Application;
+
+
+public class GouderApplication extends Application {
+    private ApplicationComponent applicationComponent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        applicationComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    public ApplicationComponent getApplicationComponent() {
+        return applicationComponent;
     }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

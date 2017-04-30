@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.API.SignUp;
+package com.gouder.cnsoftbei.APIService.SignUp;
 
 import com.gouder.cnsoftbei.Entity.CodeAuthResult;
 import com.gouder.cnsoftbei.Entity.IsSignedUpResult;

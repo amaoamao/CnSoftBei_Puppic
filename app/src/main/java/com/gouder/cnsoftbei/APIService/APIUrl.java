@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.API.LogIn;
-
-import com.gouder.cnsoftbei.Entity.LogInResult;
-
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.POST;
+package com.gouder.cnsoftbei.APIService;
 
 
-public interface LogInService {
+public class APIUrl {
+    public static final String BASE_URL = "http://119.29.246.19:8000";
 
-    @POST("/login")
-    Call<LogInResult> logIn(@Body LogInBuilder builder);
 }

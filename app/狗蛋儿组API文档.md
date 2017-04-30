@@ -11,10 +11,15 @@
 }
 ```
 
+---
+
+>   2017/4/8 - 2017/4/14
+
 ## 注册相关
-### 判断是否已经注册
-eg.
-```shell
+
+### 是否已经注册		修改：增加头像字段
+e.g.
+```
 GET http://xxx.xxx.xxx.xxx/signup?phone=17761302891
 ```
 返回示例：
@@ -28,6 +33,19 @@ GET http://xxx.xxx.xxx.xxx/signup?phone=17761302891
     "phone":"17761302891",
     "isSignedUp":false
     //如果未注册，则返回false
+  }
+}
+
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "isSignedUp": {
+    "phone":"17761302891",
+    "isSignedUp":true,
+    "avatar":"cnsdnvcajspokjwopcvjiosajcs=="
+    //如果已经注册，则返回true和头像
   }
 }
 ```
@@ -67,7 +85,8 @@ GET http://xxx.xxx.xxx.xxx/signup/auth?phone=17761302891&code=123456
   }
 }
 ```
-### 注册
+### 注册	修改：增加头像字段
+
 e.g. 
 ```shell
 POST http://xxx.xxx.xxx.xxx/signup
@@ -91,7 +110,7 @@ POST http://xxx.xxx.xxx.xxx/signup
 }
 ```
 ## 登录相关
-### 登录
+### 登录	修改：不返回密码
 e.g
 ```shell
 POST http://xxx.xxx.xxx.xxx/login
@@ -110,10 +129,284 @@ POST http://xxx.xxx.xxx.xxx/login
   "user": {
     "name": "amaoamao",
     "phone": "17761302891",
-    "psw": "123456",
     "gender": "male",
     "credit": 0,
     "is_admin": 0
   }
 }
 ```
+
+
+
+
+
+---
+
+>   2017/4/15 - 2017/4/21
+
+## 个人信息相关
+
+### 获取个人信息
+
+####  方式一
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/17761302891
+```
+
+返回示例：
+
+```js
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "user": {
+    "name": "amaoamao",
+    "phone": "17761302891",
+    "gender": "male",
+    "credit": 0,
+    "is_admin": 0//因为头像字段太大，在这里不返回，只能使用下面的方式单独获取头像字段
+  }
+}
+```
+
+#### 方式二
+
+```
+GET http://xxx.xxx.xxx.xxx/17761302891/name
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "str": "amaoamao"//如果要获取的字段是字符串，返回这个
+  "integer":0//如果要获取的字段是数字，返回这个
+}
+```
+
+其他字段的单独获取以此类推，包括name, **avatar**, gender, credit, is_admin
+
+### 修改个人信息
+
+e.g.
+
+```shell
+POST http://xxx.xxx.xxx.xxx/17761302891
+{
+  "name":"amao",
+  "gender":"female"//更改了多少字段就传多少字段，遍历这个list就可以，目前包括name，avatar,gender,因为手机号修改比较复杂，暂不考虑
+}
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": "修改成功"
+  }
+}
+```
+
+
+
+## 我的钱包相关
+
+### 积分商城
+
+待添加
+
+### 获取积分
+
+待添加
+
+### 积分流水
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/17761302891/credit/history?offset=0&limit=20
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": "查询成功"
+  },
+  "credit_histroy": [
+    {
+      "id": 123456,//此次识别的id，可以拿来查询这次识别的具体信息
+      "time": 666666666666,//长整形，是积分变化的时间
+      "description": "正确识别图片",
+      "pic_id": 1//识别的图片的id
+      "change": 1//积分变化
+    }, {
+      "id": 123457,
+      "time": 666666666667,
+      "description": "识别图片出错",
+      "pic_id": 2
+      "change": -1
+    },......//具体返回条目数根据limit参数和offset参数决定
+  ]
+}
+```
+
+
+
+
+
+## 历史识别相关
+
+### 获取我的识别历史
+
+注：权限验证以后再说
+
+#### 方式一
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/17761302891/history?offset=0&limit=20
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "historys": [
+    {
+      "id": 123456,//此次识别的id，和积分流水的id是一个，可以考虑积分流水表外键引用这个
+      "time": 6666666666666,//长整形，为用户最后一次识别该图片的时间
+      "pic_id": 1,//用户识别的图片ID
+      "tags":[
+        {
+          "content": "狗",
+          "isOrigin": true
+        },{
+          "content": "金毛狗",
+          "isOrigin": true
+        },{
+          "content": "握手",
+          "isOrigin": false
+        }
+      ]//用户给该图片打的标签
+    }, {
+      "id": 123457,
+      "time": 6666666666667,
+      "pic_id": 2,
+      "tags":[
+        {
+          "content": "猫",
+          "isOrigin": true
+        },{
+          "content": "金毛猫",
+          "isOrigin": true
+        }
+      ]
+    }, ......////具体返回条目数根据limit参数和offset参数决定
+  ]
+}
+```
+
+#### 方式二
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/17761302891/history/123456
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "history": {
+      "id": 123456,//此次识别的id，和积分流水的id是一个，可以考虑积分流水表外键引用这个
+      "time": 6666666666666,//长整形，为用户最后一次识别该图片的时间
+      "pic_id": 1,//用户识别的图片ID
+      "tags":[
+        {
+          "content": "狗",
+          "isOrigin": true
+        },{
+          "content": "金毛狗",
+          "isOrigin": true
+        },{
+          "content": "握手",
+          "isOrigin": false
+        }
+      ]//用户给该图片打的标签
+  }
+}
+```
+
+
+
+
+
+
+
+## 获取图片相关
+
+### 获取图片信息
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/pic/123456/info
+```
+
+返回示例：
+
+```javascript
+{
+  "error": {
+    "code": 0,
+    "message": ""
+  },
+  "info": {
+    "size": 6666666
+    "category": [
+      "动物","自然"
+    ],
+    "tag": [
+      "猫","金毛猫"
+    ]
+  }
+}
+```
+
+
+
+### 获取图片
+
+e.g.
+
+```
+GET http://xxx.xxx.xxx.xxx/pic/123456
+```
+
+返回示例：
+
+（后端内部做重定向，直接返回图片静态资源）

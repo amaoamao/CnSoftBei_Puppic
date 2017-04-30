@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -37,17 +36,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gouder.cnsoftbei.API.LogIn.LogInBuilder;
-import com.gouder.cnsoftbei.API.LogIn.LogInService;
-import com.gouder.cnsoftbei.API.SignUp.SignUpService;
+import com.gouder.cnsoftbei.APIService.LogIn.LogInBuilder;
+import com.gouder.cnsoftbei.APIService.LogIn.LogInService;
+import com.gouder.cnsoftbei.APIService.SignUp.SignUpService;
+import com.gouder.cnsoftbei.ApplicationComponent;
 import com.gouder.cnsoftbei.Entity.IsSignedUpResult;
 import com.gouder.cnsoftbei.Entity.LogInResult;
+import com.gouder.cnsoftbei.Entity.User;
+import com.gouder.cnsoftbei.GouderApplication;
 import com.gouder.cnsoftbei.Helper.AnimateHelper;
 import com.gouder.cnsoftbei.R;
-import com.gouder.cnsoftbei.Singleton.RetrofitSingleton;
-import com.gouder.cnsoftbei.Singleton.UserSingleton;
 
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +60,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
 
     public static final int SIGN_UP = 0;
@@ -81,9 +83,14 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.tv_ask_if_register)
     TextView tvAskIfRegister;
 
-    private SignUpService signUpService = null;
 
-    private LogInService logInService = null;
+    @Inject
+    SignUpService signUpService = null;
+    @Inject
+    LogInService logInService = null;
+    @Inject
+    User user = null;
+
 
     private Boolean userIsSignedUp = null;
     private Call<IsSignedUpResult> isSignedUpTask;
@@ -91,14 +98,18 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initBars();
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        signUpService = RetrofitSingleton.getInstance().create(SignUpService.class);
-        logInService = RetrofitSingleton.getInstance().create(LogInService.class);
+        ((GouderApplication) getApplication()).getApplicationComponent().inject(this);
         animate();
+    }
+
+    @Override
+    void injectComponent(ApplicationComponent component) {
+        component.inject(this);
     }
 
     private void animate() {
@@ -196,7 +207,6 @@ public class LoginActivity extends AppCompatActivity {
     public void onAskIfRegisterClicked() {
         Intent intent = new Intent(this, SignUpActivity.class);
         intent.putExtra("phone", etPhone.getText().toString());
-        startActivity(intent);
         startActivityForResult(intent, SIGN_UP);
     }
 
@@ -236,7 +246,11 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<LogInResult> call, Response<LogInResult> response) {
                     LogInResult result = response.body();
                     if (result != null && result.getError().getCode() == 0) {
-                        UserSingleton.getInstance().setUser(result.getUser());
+                        User resultUser = response.body().getUser();
+                        user.setName(resultUser.getName());
+                        user.setCredit(resultUser.getCredit());
+                        user.setGender(resultUser.getGender());
+                        user.setPhone(resultUser.getPhone());
                         Toast.makeText(LoginActivity.this, R.string.welcome_back, Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();

@@ -14,36 +14,31 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.API.SignUp;
-
-import com.gouder.cnsoftbei.Entity.User;
-
-public class SignUpBuilder {
+package com.gouder.cnsoftbei.APIService.LogIn;
 
 
-    private User user;
+public class LogInBuilder {
+    private String phone;
+    private String psw;
 
-    private String token;
-
-    public SignUpBuilder(User user, String token) {
-        this.user = user;
-        this.token = token;
+    public LogInBuilder(String phone, String psw) {
+        this.phone = phone;
+        this.psw = psw;
     }
 
-    public User getUser() {
-        return user;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getToken() {
-        return token;
+    public String getPsw() {
+        return psw;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setPsw(String psw) {
+        this.psw = psw;
     }
-
 }

@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.gouder.cnsoftbei.UI;
 
-buildscript {
-    repositories {
-        jcenter()
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+
+import com.gouder.cnsoftbei.ApplicationComponent;
+import com.gouder.cnsoftbei.GouderApplication;
+
+
+public abstract class BaseActivity extends AppCompatActivity {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        injectComponent(((GouderApplication) getApplication()).getApplicationComponent());
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    abstract void injectComponent(ApplicationComponent component);
 }

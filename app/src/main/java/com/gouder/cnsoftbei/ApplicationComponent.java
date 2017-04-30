@@ -14,31 +14,22 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.API.LogIn;
+package com.gouder.cnsoftbei;
 
+import com.gouder.cnsoftbei.UI.LoginActivity;
+import com.gouder.cnsoftbei.UI.MainActivity;
+import com.gouder.cnsoftbei.UI.SignUpActivity;
 
-public class LogInBuilder {
-    private String phone;
-    private String psw;
+import javax.inject.Singleton;
 
-    public LogInBuilder(String phone, String psw) {
-        this.phone = phone;
-        this.psw = psw;
-    }
+import dagger.Component;
 
-    public String getPhone() {
-        return phone;
-    }
+@Singleton
+@Component(modules = {ApplicationModule.class})
+public interface ApplicationComponent {
+    void inject(LoginActivity loginActivity);
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    void inject(SignUpActivity signUpActivity);
 
-    public String getPsw() {
-        return psw;
-    }
-
-    public void setPsw(String psw) {
-        this.psw = psw;
-    }
+    void inject(MainActivity mainActivity);
 }

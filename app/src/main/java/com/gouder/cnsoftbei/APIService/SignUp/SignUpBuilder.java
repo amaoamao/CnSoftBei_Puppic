@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Singleton;
+package com.gouder.cnsoftbei.APIService.SignUp;
 
 import com.gouder.cnsoftbei.Entity.User;
 
+public class SignUpBuilder {
 
-public class UserSingleton {
-    private volatile static UserSingleton ourInstance;
+
     private User user;
 
-    private UserSingleton() {
-    }
+    private String token;
 
-    public static UserSingleton getInstance() {
-        if (ourInstance == null) {
-            synchronized (UserSingleton.class) {
-                if (ourInstance == null) {
-                    ourInstance = new UserSingleton();
-                }
-            }
-        }
-        return ourInstance;
+    public SignUpBuilder(User user, String token) {
+        this.user = user;
+        this.token = token;
     }
 
     public User getUser() {
@@ -44,4 +37,13 @@ public class UserSingleton {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 }

@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,17 +35,19 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
-import com.gouder.cnsoftbei.API.SignUp.SignUpBuilder;
-import com.gouder.cnsoftbei.API.SignUp.SignUpService;
+import com.gouder.cnsoftbei.APIService.SignUp.SignUpBuilder;
+import com.gouder.cnsoftbei.APIService.SignUp.SignUpService;
+import com.gouder.cnsoftbei.ApplicationComponent;
 import com.gouder.cnsoftbei.Entity.CodeAuthResult;
 import com.gouder.cnsoftbei.Entity.SendAuthCodeResult;
 import com.gouder.cnsoftbei.Entity.SignUpResult;
 import com.gouder.cnsoftbei.Entity.Token;
 import com.gouder.cnsoftbei.Entity.User;
 import com.gouder.cnsoftbei.R;
-import com.gouder.cnsoftbei.Singleton.RetrofitSingleton;
 
 import java.util.Locale;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,9 +56,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseActivity {
 
 
+    @Inject
     SignUpService signUpService;
     @BindView(R.id.et_name)
     EditText etName;
@@ -73,12 +75,11 @@ public class SignUpActivity extends AppCompatActivity {
     MaterialDialog authenticatingDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initBars();
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
-        signUpService = RetrofitSingleton.getInstance().create(SignUpService.class);
         phone = getIntent().getStringExtra("phone");
         authenticatingDialog = new MaterialDialog.Builder(SignUpActivity.this)
                 .progress(true, 100)
@@ -124,6 +125,11 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
         codeAuthDialog.show();
+    }
+
+    @Override
+    void injectComponent(ApplicationComponent component) {
+        component.inject(this);
     }
 
     private void initCodeAuthDialog(MaterialDialog codeAuthDialog) {
