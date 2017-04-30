@@ -19,12 +19,13 @@ package com.gouder.cnsoftbei.View;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gouder.cnsoftbei.ApplicationComponent;
@@ -41,43 +42,46 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.message)
-    TextView message;
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
-
     @Inject
     User user;
+    private FragmentManager fragmentManager;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.slid_up, R.anim.popup_exit);
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    message.setText(R.string.title_home);
-                    return true;
+                    fragmentTransaction.replace(R.id.container, HomeFragment.newInstance());
+                    break;
                 case R.id.navigation_dashboard:
-                    message.setText(R.string.title_dashboard);
-                    return true;
+                    fragmentTransaction.replace(R.id.container, DashboardFragment.newInstance());
+                    break;
             }
-            return false;
+
+            fragmentTransaction.commit();
+            return true;
         }
 
     };
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        message = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         setSupportActionBar(toolbar);
         initBars();
         Toast.makeText(this, user.getName(), Toast.LENGTH_SHORT).show();
+        fragmentManager = getSupportFragmentManager();
+        navigation.setSelectedItemId(R.id.navigation_dashboard);
     }
 
     @Override

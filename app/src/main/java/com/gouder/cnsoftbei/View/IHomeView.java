@@ -14,25 +14,9 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei;
+package com.gouder.cnsoftbei.View;
 
-import com.gouder.cnsoftbei.Presenter.LogInPresenter;
-import com.gouder.cnsoftbei.Presenter.SignUpPresenter;
-import com.gouder.cnsoftbei.View.HomeFragment;
-import com.gouder.cnsoftbei.View.MainActivity;
 
-import javax.inject.Singleton;
-
-import dagger.Component;
-
-@Singleton
-@Component(modules = {ApplicationModule.class})
-public interface ApplicationComponent {
-    void inject(SignUpPresenter signUpActivity);
-
-    void inject(MainActivity mainActivity);
-
-    void inject(LogInPresenter logInPresenter);
-
-    void inject(HomeFragment homeFragment);
+public interface IHomeView {
+    void refresh();
 }

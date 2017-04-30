@@ -65,7 +65,7 @@ public class ApplicationModule {
     @Provides
     @Singleton
     User provideUser() {
-        return new User();
+        return new User("amaoamao", "17761302891", "123123", "male");
     }
 
 }
