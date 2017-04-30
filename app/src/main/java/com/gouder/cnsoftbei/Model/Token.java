@@ -15,23 +15,34 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SendAuthCodeResult {
+public class Token {
 
-    @SerializedName("error")
+    @SerializedName("phone")
     @Expose
-    private Error error;
+    private String phone;
+    @SerializedName("token")
+    @Expose
+    private String token;
 
-    public Error getError() {
-        return error;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setError(Error error) {
-        this.error = error;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }

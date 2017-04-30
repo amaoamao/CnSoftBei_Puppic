@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.UI;
+package com.gouder.cnsoftbei.View;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gouder.cnsoftbei.ApplicationComponent;
-import com.gouder.cnsoftbei.Entity.User;
+import com.gouder.cnsoftbei.BaseActivity;
+import com.gouder.cnsoftbei.Model.User;
 import com.gouder.cnsoftbei.R;
 
 import javax.inject.Inject;
@@ -80,11 +81,12 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    void injectComponent(ApplicationComponent component) {
+    public void injectComponent(ApplicationComponent component) {
         component.inject(this);
     }
 
-    private void animate() {
+    @Override
+    public void introAnimate() {
         //TODO intro animation
     }
 

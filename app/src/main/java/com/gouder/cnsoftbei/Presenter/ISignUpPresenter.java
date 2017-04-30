@@ -14,36 +14,15 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.APIService.SignUp;
-
-import com.gouder.cnsoftbei.Model.User;
-
-public class SignUpBuilder {
+package com.gouder.cnsoftbei.Presenter;
 
 
-    private User user;
+public interface ISignUpPresenter {
+    void sendAuthCode();
 
-    private String token;
+    void codeAuth();
 
-    public SignUpBuilder(User user, String token) {
-        this.user = user;
-        this.token = token;
-    }
+    void signUp();
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
+    void onDestroy();
 }

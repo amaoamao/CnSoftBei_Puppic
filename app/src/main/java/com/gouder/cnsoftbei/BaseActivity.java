@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2017 Peter Mao
  *
@@ -15,34 +14,21 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
-public class Token {
 
-    @SerializedName("phone")
-    @Expose
-    private String phone;
-    @SerializedName("token")
-    @Expose
-    private String token;
-
-    public String getPhone() {
-        return phone;
+public abstract class BaseActivity extends AppCompatActivity {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        injectComponent(GouderApplication.getApplicationComponent());
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public abstract void injectComponent(ApplicationComponent component);
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
+    public abstract void introAnimate();
 }

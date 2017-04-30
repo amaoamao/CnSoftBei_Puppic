@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SignUpResult {
+public class LogInResult {
 
     @SerializedName("error")
     @Expose
     private Error error;
+    @SerializedName("user")
+    @Expose
+    private User user;
 
     public Error getError() {
         return error;
@@ -32,6 +35,14 @@ public class SignUpResult {
 
     public void setError(Error error) {
         this.error = error;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

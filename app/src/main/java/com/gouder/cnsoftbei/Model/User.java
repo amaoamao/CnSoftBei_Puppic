@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.regex.Pattern;
 
 public class User {
 
@@ -99,4 +101,12 @@ public class User {
         this.isAdmin = isAdmin;
     }
 
+
+    public boolean isPhoneValid() {
+        return phone != null && Pattern.compile("^((13[0-9])|(15[^4])|(18[0235-9])|(17[0-8])|(147))\\d{8}$").matcher(phone).matches();
+    }
+
+    public boolean isPasswordValid() {
+        return psw != null && psw.length() > 4;
+    }
 }

@@ -16,9 +16,9 @@
 
 package com.gouder.cnsoftbei;
 
-import com.gouder.cnsoftbei.UI.LoginActivity;
-import com.gouder.cnsoftbei.UI.MainActivity;
-import com.gouder.cnsoftbei.UI.SignUpActivity;
+import com.gouder.cnsoftbei.Presenter.LogInPresenter;
+import com.gouder.cnsoftbei.Presenter.SignUpPresenter;
+import com.gouder.cnsoftbei.View.MainActivity;
 
 import javax.inject.Singleton;
 
@@ -27,9 +27,9 @@ import dagger.Component;
 @Singleton
 @Component(modules = {ApplicationModule.class})
 public interface ApplicationComponent {
-    void inject(LoginActivity loginActivity);
-
-    void inject(SignUpActivity signUpActivity);
+    void inject(SignUpPresenter signUpActivity);
 
     void inject(MainActivity mainActivity);
+
+    void inject(LogInPresenter logInPresenter);
 }

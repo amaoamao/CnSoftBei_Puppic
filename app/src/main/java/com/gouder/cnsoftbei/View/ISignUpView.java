@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2017 Peter Mao
  *
@@ -15,34 +14,36 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei.View;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
-public class CodeAuthResult {
+public interface ISignUpView {
 
-    @SerializedName("error")
-    @Expose
-    private Error error;
-    @SerializedName("token")
-    @Expose
-    private Token token;
+    void initBars();
 
-    public Error getError() {
-        return error;
-    }
+    void signUpSucceed();
 
-    public void setError(Error error) {
-        this.error = error;
-    }
+    void showProgress(boolean show);
 
-    public Token getToken() {
-        return token;
-    }
+    void setBtnSendAuthCodeEnabled(boolean enabled);
 
-    public void setToken(Token token) {
-        this.token = token;
-    }
+    void showCodeAuthDialog(boolean show);
 
+    void codeSent(boolean succeed);
+
+    void startCountDown();
+
+    void destroyCountDown();
+
+    String getName();
+
+    String getPassword();
+
+    String getGender();
+
+    String getCode();
+
+    void authComplete(boolean succeed);
+
+    void signUpFailed();
 }

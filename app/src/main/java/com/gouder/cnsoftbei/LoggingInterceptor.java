@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2017 Peter Mao
  *
@@ -15,34 +14,22 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.Entity;
+package com.gouder.cnsoftbei;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
-public class LogInResult {
+import android.util.Log;
 
-    @SerializedName("error")
-    @Expose
-    private Error error;
-    @SerializedName("user")
-    @Expose
-    private User user;
+import java.io.IOException;
 
-    public Error getError() {
-        return error;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class LoggingInterceptor implements Interceptor {
+    @Override
+    public Response intercept(Chain chain) throws IOException {
+        Request request = chain.request();
+        Log.i("FFFFUCK", String.format("Sending request %s on", request.url()));
+        return chain.proceed(request);
     }
-
-    public void setError(Error error) {
-        this.error = error;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 }

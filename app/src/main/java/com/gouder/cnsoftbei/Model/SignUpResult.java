@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2017 Peter Mao
  *
@@ -14,36 +15,23 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.APIService.SignUp;
+package com.gouder.cnsoftbei.Model;
 
-import com.gouder.cnsoftbei.Model.User;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class SignUpBuilder {
+public class SignUpResult {
 
+    @SerializedName("error")
+    @Expose
+    private Error error;
 
-    private User user;
-
-    private String token;
-
-    public SignUpBuilder(User user, String token) {
-        this.user = user;
-        this.token = token;
+    public Error getError() {
+        return error;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setError(Error error) {
+        this.error = error;
     }
 
 }

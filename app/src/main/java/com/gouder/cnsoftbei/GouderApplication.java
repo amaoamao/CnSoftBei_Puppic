@@ -20,16 +20,17 @@ package com.gouder.cnsoftbei;
 import android.app.Application;
 
 
+
 public class GouderApplication extends Application {
-    private ApplicationComponent applicationComponent;
+    private static ApplicationComponent applicationComponent;
+
+    public static ApplicationComponent getApplicationComponent() {
+        return applicationComponent;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         applicationComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
-    }
-
-    public ApplicationComponent getApplicationComponent() {
-        return applicationComponent;
     }
 }

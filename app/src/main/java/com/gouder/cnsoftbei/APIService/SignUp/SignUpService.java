@@ -16,10 +16,10 @@
 
 package com.gouder.cnsoftbei.APIService.SignUp;
 
-import com.gouder.cnsoftbei.Entity.CodeAuthResult;
-import com.gouder.cnsoftbei.Entity.IsSignedUpResult;
-import com.gouder.cnsoftbei.Entity.SendAuthCodeResult;
-import com.gouder.cnsoftbei.Entity.SignUpResult;
+import com.gouder.cnsoftbei.Model.CodeAuthResult;
+import com.gouder.cnsoftbei.Model.IsSignedUpResult;
+import com.gouder.cnsoftbei.Model.SendAuthCodeResult;
+import com.gouder.cnsoftbei.Model.SignUpResult;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

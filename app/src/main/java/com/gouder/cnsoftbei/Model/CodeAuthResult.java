@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2017 Peter Mao
  *
@@ -14,22 +15,34 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.UI;
+package com.gouder.cnsoftbei.Model;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import com.gouder.cnsoftbei.ApplicationComponent;
-import com.gouder.cnsoftbei.GouderApplication;
+public class CodeAuthResult {
 
+    @SerializedName("error")
+    @Expose
+    private Error error;
+    @SerializedName("token")
+    @Expose
+    private Token token;
 
-public abstract class BaseActivity extends AppCompatActivity {
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        injectComponent(((GouderApplication) getApplication()).getApplicationComponent());
+    public Error getError() {
+        return error;
     }
 
-    abstract void injectComponent(ApplicationComponent component);
+    public void setError(Error error) {
+        this.error = error;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
 }

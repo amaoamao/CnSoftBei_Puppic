@@ -19,17 +19,19 @@ package com.gouder.cnsoftbei;
 import com.gouder.cnsoftbei.APIService.APIUrl;
 import com.gouder.cnsoftbei.APIService.LogIn.LogInService;
 import com.gouder.cnsoftbei.APIService.SignUp.SignUpService;
-import com.gouder.cnsoftbei.Entity.User;
+import com.gouder.cnsoftbei.Model.User;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
-class ApplicationModule {
+public class ApplicationModule {
     @Provides
     @Singleton
     LogInService provideLogInService(Retrofit retrofit) {
@@ -44,8 +46,20 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit() {
-        return new Retrofit.Builder().baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    Interceptor provideInterceptor() {
+        return new LoggingInterceptor();
+    }
+
+    @Provides
+    @Singleton
+    OkHttpClient provideClient(Interceptor interceptor) {
+        return new OkHttpClient.Builder().addNetworkInterceptor(interceptor).build();
+    }
+
+    @Provides
+    @Singleton
+    Retrofit provideRetrofit(OkHttpClient client) {
+        return new Retrofit.Builder().client(client).baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
     }
 
     @Provides

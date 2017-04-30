@@ -16,7 +16,7 @@
 
 package com.gouder.cnsoftbei.APIService.LogIn;
 
-import com.gouder.cnsoftbei.Entity.LogInResult;
+import com.gouder.cnsoftbei.Model.LogInResult;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
