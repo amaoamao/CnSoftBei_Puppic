@@ -46,4 +46,10 @@ public interface ISignUpView {
     void authComplete(boolean succeed);
 
     void signUpFailed();
+
+    void selectAvatar();
+
+    void uploadSucceed(boolean b);
+
+    void setAvatar(String url);
 }

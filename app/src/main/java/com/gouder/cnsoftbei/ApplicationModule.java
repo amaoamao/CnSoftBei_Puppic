@@ -17,6 +17,7 @@
 package com.gouder.cnsoftbei;
 
 import com.gouder.cnsoftbei.APIService.APIUrl;
+import com.gouder.cnsoftbei.APIService.ImgurService;
 import com.gouder.cnsoftbei.APIService.LogIn.LogInService;
 import com.gouder.cnsoftbei.APIService.SignUp.SignUpService;
 import com.gouder.cnsoftbei.Model.User;
@@ -34,14 +35,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApplicationModule {
     @Provides
     @Singleton
-    LogInService provideLogInService(Retrofit retrofit) {
-        return retrofit.create(LogInService.class);
+    LogInService provideLogInService(Retrofit.Builder retrofit) {
+        return retrofit.build().create(LogInService.class);
     }
 
     @Provides
     @Singleton
-    SignUpService provideSignUpService(Retrofit retrofit) {
-        return retrofit.create(SignUpService.class);
+    SignUpService provideSignUpService(Retrofit.Builder retrofit) {
+        return retrofit.build().create(SignUpService.class);
+    }
+
+    @Provides
+    @Singleton
+    ImgurService provideImgurService(Retrofit.Builder retrofit) {
+        return retrofit.baseUrl("https://api.imgur.com/3/").build().create(ImgurService.class);
     }
 
     @Provides
@@ -58,14 +65,15 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit(OkHttpClient client) {
-        return new Retrofit.Builder().client(client).baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    Retrofit.Builder provideRetrofit(OkHttpClient client) {
+        return new Retrofit.Builder().client(client).baseUrl(APIUrl.BASE_URL).addConverterFactory(GsonConverterFactory.create());
     }
 
     @Provides
     @Singleton
     User provideUser() {
-        return new User("amaoamao", "17761302891", "123123", "male");
+//        return new User("amaoamao", "17761302891", "123123", "male");
+        return new User();
     }
 
 }

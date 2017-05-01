@@ -110,6 +110,7 @@ public class LogInPresenter implements ILoginPresenter {
                             user.setName(resultUser.getName());
                             user.setCredit(resultUser.getCredit());
                             user.setGender(resultUser.getGender());
+                            user.setAvatar(resultUser.getAvatar());
                             loginView.loginSucceed();
                         } else {
                             onFailure(null, null);

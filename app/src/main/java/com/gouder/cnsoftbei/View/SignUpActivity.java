@@ -16,9 +16,17 @@
 
 package com.gouder.cnsoftbei.View;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,25 +35,37 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.gouder.cnsoftbei.ApplicationComponent;
 import com.gouder.cnsoftbei.BaseActivity;
 import com.gouder.cnsoftbei.Presenter.ISignUpPresenter;
 import com.gouder.cnsoftbei.Presenter.SignUpPresenter;
 import com.gouder.cnsoftbei.R;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignUpActivity extends BaseActivity implements ISignUpView {
 
 
+    private static final int REQUEST_CODE_CHOOSE = 0;
+    private static final int READ_WRITE_EXTERNAL = 1;
     ISignUpPresenter presenter;
 
     @BindView(R.id.et_name)
@@ -56,6 +76,10 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
     RadioGroup rgGender;
     @BindView(R.id.btn_signup)
     AppCompatButton btnSignUp;
+    @BindView(R.id.iv_avatar)
+    CircleImageView ivAvatar;
+    @BindView(R.id.tv_ask_if_login)
+    TextView tvAskIfLogin;
     private MaterialDialog progressDialog;
     private MaterialDialog codeAuthDialog;
     private AppCompatButton btnSendAuthCode;
@@ -114,6 +138,14 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            presenter.uploadAvatar(Matisse.obtainResult(data).get(0));
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
@@ -153,7 +185,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
     @Override
     public void showProgress(boolean show) {
         if (progressDialog == null) {
-            progressDialog = new MaterialDialog.Builder(this).title(R.string.authenticating).progress(true, 100).content(R.string.wait).build();
+            progressDialog = new MaterialDialog.Builder(this).title(R.string.authenticating).cancelable(false).progress(true, 100).content(R.string.wait).build();
         }
         if (show) {
             progressDialog.show();
@@ -180,7 +212,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
                     })
                     .onPositive((dialog, which) -> presenter.codeAuth()).cancelable(false)
                     .customView(R.layout.dialog_auth_code, true)
-                    .autoDismiss(false).build();
+                    .cancelable(false).autoDismiss(false).build();
             initCodeAuthDialog(codeAuthDialog);
         }
 
@@ -238,4 +270,73 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
     public void signUpFailed() {
         Toast.makeText(SignUpActivity.this, R.string.sign_up_failed, Toast.LENGTH_SHORT).show();
     }
+
+    @OnClick(R.id.iv_avatar)
+    @Override
+    public void selectAvatar() {
+        final List<String> permissionsList = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE);
+            addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (!permissionsList.isEmpty())
+                ActivityCompat.requestPermissions(this,
+                        permissionsList.toArray(new String[permissionsList.size()]),
+                        READ_WRITE_EXTERNAL);
+        }
+        if (permissionsList.isEmpty()) {
+            Matisse.from(this)
+                    .choose(MimeType.allOf())
+                    .countable(false)
+                    .maxSelectable(1)
+                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                    .thumbnailScale(0.85f)
+                    .imageEngine(new GlideEngine())
+                    .forResult(REQUEST_CODE_CHOOSE);
+        }
+
+    }
+
+    @Override
+    public void uploadSucceed(boolean b) {
+        Toast.makeText(this, b ? "上传成功" : "上传失败，请稍后再试", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setAvatar(String url) {
+        Glide.with(this).load(url).into(ivAvatar);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            shouldShowRequestPermissionRationale(permission);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case READ_WRITE_EXTERNAL:
+                Map<String, Integer> perms = new HashMap<>();
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    selectAvatar();
+                } else {
+                    Toast.makeText(this, "Some permissions are denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
+    }
 }
+
+

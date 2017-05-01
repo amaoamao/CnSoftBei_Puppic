@@ -18,19 +18,27 @@ package com.gouder.cnsoftbei;
 
 
 import android.app.Application;
+import android.content.Context;
 
+import java.lang.ref.WeakReference;
 
 
 public class GouderApplication extends Application {
     private static ApplicationComponent applicationComponent;
+    private static WeakReference<Context> context;
 
     public static ApplicationComponent getApplicationComponent() {
         return applicationComponent;
+    }
+
+    public static Context getContext() {
+        return context.get();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         applicationComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
+        context = new WeakReference<>(this.getApplicationContext());
     }
 }

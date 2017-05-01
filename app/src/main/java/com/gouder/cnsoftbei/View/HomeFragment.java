@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gouder.cnsoftbei.GouderApplication;
 import com.gouder.cnsoftbei.Model.User;
 import com.gouder.cnsoftbei.R;
@@ -37,11 +38,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class HomeFragment extends Fragment implements IHomeView {
     @BindView(R.id.iv_avatar)
-    ImageView ivAvatar;
+    CircleImageView ivAvatar;
     @BindView(R.id.tv_name)
     TextView tvName;
     @BindView(R.id.tv_phone)
@@ -57,6 +59,7 @@ public class HomeFragment extends Fragment implements IHomeView {
 
     @Inject
     User user;
+    private View rootView;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -75,12 +78,12 @@ public class HomeFragment extends Fragment implements IHomeView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder = ButterKnife.bind(this, view);
+
+        rootView = inflater.inflate(R.layout.fragment_home, container, false);
         GouderApplication.getApplicationComponent().inject(this);
+        unbinder = ButterKnife.bind(this, rootView);
         refresh();
-        return view;
+        return rootView;
     }
 
 
@@ -105,7 +108,6 @@ public class HomeFragment extends Fragment implements IHomeView {
         tvName.setText(user.getName());
         tvPhone.setText(user.getPhone());
         ivGender.setImageTintList(ColorStateList.valueOf(Color.parseColor(user.getGender().equals("male") ? "#529ECB" : "#56bc8a")));
-
-
+        Glide.with(this).load(user.getAvatar()).into(ivAvatar);
     }
 }

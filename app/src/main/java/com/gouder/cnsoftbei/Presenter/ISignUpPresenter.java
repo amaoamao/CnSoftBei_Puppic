@@ -17,6 +17,8 @@
 package com.gouder.cnsoftbei.Presenter;
 
 
+import android.net.Uri;
+
 public interface ISignUpPresenter {
     void sendAuthCode();
 
@@ -25,4 +27,6 @@ public interface ISignUpPresenter {
     void signUp();
 
     void onDestroy();
+
+    void uploadAvatar(Uri uri);
 }

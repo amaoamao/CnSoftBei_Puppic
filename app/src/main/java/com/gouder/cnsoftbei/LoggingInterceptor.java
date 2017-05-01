@@ -29,7 +29,7 @@ public class LoggingInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        Log.i("FFFFUCK", String.format("Sending request %s on", request.url()));
+        Log.e("FFFFUCK", String.format("Sending request %s on", request.url()));
         return chain.proceed(request);
     }
 }

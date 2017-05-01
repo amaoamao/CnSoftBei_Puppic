@@ -45,5 +45,4 @@ public interface SignUpService {
     @POST("/signup")
     Call<SignUpResult> signUp(@Body SignUpBuilder builder);
 
-
 }

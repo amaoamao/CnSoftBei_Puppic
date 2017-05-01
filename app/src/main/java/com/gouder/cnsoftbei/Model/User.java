@@ -43,11 +43,16 @@ public class User {
     @Expose
     private Integer isAdmin;
 
-    public User(String name, String phone, String psw, String gender) {
+    @SerializedName("avatar")
+    @Expose
+    private String avatar;
+
+    public User(String name, String phone, String psw, String gender, String avatar) {
         this.name = name;
         this.phone = phone;
         this.psw = psw;
         this.gender = gender;
+        this.avatar = avatar;
     }
 
     public User() {
@@ -108,5 +113,13 @@ public class User {
 
     public boolean isPasswordValid() {
         return psw != null && psw.length() > 4;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

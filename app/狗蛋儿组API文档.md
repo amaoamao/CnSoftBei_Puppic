@@ -5,8 +5,8 @@
     "code": /* err_code here */,
     "message": /* err_description here */
   },
-  "data": {
-    // data here
+  "uploadedImageInfo": {
+    // uploadedImageInfo here
   }
 }
 ```

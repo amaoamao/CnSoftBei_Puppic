@@ -244,7 +244,7 @@ public class LoginActivity extends BaseActivity implements ILoginView {
     @Override
     public void showProgress(final boolean show) {
         if (progressDialog == null) {
-            progressDialog = new MaterialDialog.Builder(this).title(R.string.authenticating).progress(true, 100).content(R.string.wait).build();
+            progressDialog = new MaterialDialog.Builder(this).title(R.string.authenticating).progress(true, 100).cancelable(false).content(R.string.wait).build();
         }
         if (show) {
             progressDialog.show();
