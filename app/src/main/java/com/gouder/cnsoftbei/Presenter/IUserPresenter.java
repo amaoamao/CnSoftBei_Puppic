@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.gouder.cnsoftbei.View;
+package com.gouder.cnsoftbei.Presenter;
 
 
-import com.gouder.cnsoftbei.Model.User;
+public interface IUserPresenter {
 
-public interface IHomeView {
-    void refresh(User user);
+    void onDestroy();
+
+    void fabClicked();
+
+    void init();
 }

@@ -17,8 +17,8 @@
 package com.gouder.cnsoftbei.View;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -37,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -80,9 +81,10 @@ public class HomeFragment extends Fragment implements IHomeView {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        GouderApplication.getApplicationComponent().inject(this);
+
         unbinder = ButterKnife.bind(this, rootView);
-        refresh();
+        GouderApplication.getApplicationComponent().inject(this);
+        refresh(user);
         return rootView;
     }
 
@@ -104,10 +106,16 @@ public class HomeFragment extends Fragment implements IHomeView {
     }
 
     @Override
-    public void refresh() {
+    public void refresh(User user) {
         tvName.setText(user.getName());
         tvPhone.setText(user.getPhone());
-        ivGender.setImageTintList(ColorStateList.valueOf(Color.parseColor(user.getGender().equals("male") ? "#529ECB" : "#56bc8a")));
+        ivGender.setImageTintList(ColorStateList.valueOf(GouderApplication.getContext().getResources().getColor(
+                user.getGender().equals("male") ? R.color.colorPrimary : R.color.colorPink)));
         Glide.with(this).load(user.getAvatar()).into(ivAvatar);
+    }
+
+    @OnClick(R.id.rl_user)
+    public void onUserClicked() {
+        startActivity(new Intent(getActivity(), UserActivity.class));
     }
 }

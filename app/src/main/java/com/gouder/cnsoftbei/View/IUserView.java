@@ -17,8 +17,20 @@
 package com.gouder.cnsoftbei.View;
 
 
-import com.gouder.cnsoftbei.Model.User;
+import android.support.annotation.DrawableRes;
 
-public interface IHomeView {
-    void refresh(User user);
+public interface IUserView {
+
+    void setAvatar(String url);
+
+    void enableEditTexts(boolean enabled);
+
+    void setFabIcon(@DrawableRes int res);
+
+    void setPhone(String phone);
+
+    String getUsername();
+
+    void setUsername(String username);
+
 }

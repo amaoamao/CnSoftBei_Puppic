@@ -18,6 +18,7 @@ package com.gouder.cnsoftbei;
 
 import com.gouder.cnsoftbei.Presenter.LogInPresenter;
 import com.gouder.cnsoftbei.Presenter.SignUpPresenter;
+import com.gouder.cnsoftbei.Presenter.UserPresenter;
 import com.gouder.cnsoftbei.View.HomeFragment;
 import com.gouder.cnsoftbei.View.MainActivity;
 
@@ -35,4 +36,6 @@ public interface ApplicationComponent {
     void inject(LogInPresenter logInPresenter);
 
     void inject(HomeFragment homeFragment);
+
+    void inject(UserPresenter userActivity);
 }
