@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Peter Mao
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,9 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    tools:context="com.gouder.cnsoftbei.View.DashboardFragment">
-
-    <com.gouder.cnsoftbei.Widget.StackLayout
-        android:id="@+id/stack_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</RelativeLayout>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="90"
+        android:endColor="@android:color/transparent"
+        android:startColor="@color/colorBlackTransparent" />
+</shape>

@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.gouder.cnsoftbei.Model;
 
-buildscript {
-    repositories {
-        jcenter()
+
+import java.util.List;
+
+public class UserPreferenceResult {
+
+    private Error error;
+    private List<String> pref_list;
+
+    public Error getError() {
+        return error;
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    public void setError(Error error) {
+        this.error = error;
     }
-}
 
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
+    public List<String> getPref_list() {
+        return pref_list;
     }
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    public void setPref_list(List<String> pref_list) {
+        this.pref_list = pref_list;
+    }
 }

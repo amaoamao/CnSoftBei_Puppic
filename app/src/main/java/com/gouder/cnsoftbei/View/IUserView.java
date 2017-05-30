@@ -19,11 +19,13 @@ package com.gouder.cnsoftbei.View;
 
 import android.support.annotation.DrawableRes;
 
+import java.util.List;
+
 public interface IUserView {
 
     void setAvatar(String url);
 
-    void enableEditTexts(boolean enabled);
+    void setEditTextsEnabled(boolean enabled);
 
     void setFabIcon(@DrawableRes int res);
 
@@ -33,4 +35,11 @@ public interface IUserView {
 
     void setUsername(String username);
 
+    void showProgress(boolean b);
+
+    void setCheckBoxEnabled(boolean enabled);
+
+    void setCheckBoxSelected(List<String> selected);
+
+    void setCheckBoxs(List<String> boxes);
 }

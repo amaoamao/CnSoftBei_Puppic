@@ -370,7 +370,7 @@ GET http://xxx.xxx.xxx.xxx/17761302891/history/123456
 ## 获取图片相关
 
 ### 获取图片信息
-
+## 删除size字段
 e.g.
 
 ```
@@ -386,7 +386,6 @@ GET http://xxx.xxx.xxx.xxx/pic/123456/info
     "message": ""
   },
   "info": {
-    "size": 6666666
     "category": [
       "动物","自然"
     ],
@@ -410,3 +409,150 @@ GET http://xxx.xxx.xxx.xxx/pic/123456
 返回示例：
 
 （后端内部做重定向，直接返回图片静态资源）
+
+
+
+## 获取图片所有大类别
+```
+GET http://xxx.xxx.xxx.xxx/getAllCategories
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "查询成功"
+},
+　　"cat_list":[‘airport’,’market’]
+}
+```
+## 获取某一类别下所有图片索引（id）
+
+```
+GET http://xxx.xxx.xxx.xxx/pic_in_category?category=airport
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "查询成功"
+},
+　　"img_list":[1,2,3]
+}
+```
+
+## 获取用户偏好（大分类名称）
+
+```
+GET http://xxx.xxx.xxx.xxx/get_preference?phone=17713566666
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "查询成功"
+},
+　　"pref_list":[‘airtport’,’market’]
+}
+```
+## 添加一个用户偏好
+
+```
+POST http://xxx.xxx.xxx.xxx/get_preference
+phone:177135xxxxx     //传入POST字段不是json
+category:’airport’
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "查询成功"
+},
+}
+```
+
+## 删除一个用户偏好
+
+```
+POST http://xxx.xxx.xxx.xxx/delete_preference
+phone:177135xxxxx
+category:’airport’
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "删除用户偏好成功"
+},
+}
+```
+
+## 保存用户对一张图片的识别记录
+
+```
+POST http://xxx.xxx.xxx.xxx/177135xxxxx/save_history
+Json
+{
+	“time”:666,
+	“pic_id”:12,
+	“tags”: [  {“tag”:’airport’,”isOrigin”:true},
+				 {“tag”:’atm’,”isOrigin”:false}]
+}
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "历史插入成功"
+},
+}
+```
+## 修改稿用户对一张图片的识别记录
+
+```
+POST http://xxx.xxx.xxx.xxx/177135xxxxx/modify_history
+Json
+{
+	“time”:666,
+	“pic_id”:12,
+	“tags”: [  				//传入修改过后的标签列表
+{“tag”:’airport’,”isOrigin”:true}, 
+				{“tag”:’atm’,”isOrigin”:false}
+]
+}
+```
+
+返回示例：
+
+```javascript
+{
+　　"error": 
+　　{
+　　"code": 0,
+"message": "历史修改成功"
+},
+}
+```

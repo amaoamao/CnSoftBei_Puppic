@@ -114,6 +114,12 @@ public class HomeFragment extends Fragment implements IHomeView {
         Glide.with(this).load(user.getAvatar()).into(ivAvatar);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh(user);
+    }
+
     @OnClick(R.id.rl_user)
     public void onUserClicked() {
         startActivity(new Intent(getActivity(), UserActivity.class));

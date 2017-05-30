@@ -111,6 +111,23 @@
                 android:text="@string/history"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/tv_credit_his"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@color/colorWhite"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:drawablePadding="10dp"
+                android:drawableStart="@drawable/ic_history_black_24dp"
+                android:foreground="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/credit_his"
+                android:textSize="18sp" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -19,14 +19,9 @@ package com.gouder.cnsoftbei.View;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -46,15 +41,12 @@ import com.gouder.cnsoftbei.BaseActivity;
 import com.gouder.cnsoftbei.Presenter.ISignUpPresenter;
 import com.gouder.cnsoftbei.Presenter.SignUpPresenter;
 import com.gouder.cnsoftbei.R;
+import com.tbruyelle.rxpermissions.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -97,6 +89,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
         }
     };
     private EditText etAuthCode;
+    private RxPermissions rxPermissions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +98,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
         presenter = new SignUpPresenter(this);
+        rxPermissions = new RxPermissions(this);
     }
 
     @Override
@@ -274,27 +268,20 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
     @OnClick(R.id.iv_avatar)
     @Override
     public void selectAvatar() {
-        final List<String> permissionsList = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE);
-            addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-            if (!permissionsList.isEmpty())
-                ActivityCompat.requestPermissions(this,
-                        permissionsList.toArray(new String[permissionsList.size()]),
-                        READ_WRITE_EXTERNAL);
-        }
-        if (permissionsList.isEmpty()) {
-            Matisse.from(this)
-                    .choose(MimeType.allOf())
-                    .countable(false)
-                    .maxSelectable(1)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .thumbnailScale(0.85f)
-                    .imageEngine(new GlideEngine())
-                    .forResult(REQUEST_CODE_CHOOSE);
-        }
-
+        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(granted -> {
+            if (granted) {
+                Matisse.from(this)
+                        .choose(MimeType.allOf())
+                        .countable(false)
+                        .maxSelectable(1)
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                        .thumbnailScale(0.85f)
+                        .imageEngine(new GlideEngine())
+                        .forResult(REQUEST_CODE_CHOOSE);
+            } else {
+                Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show();
+            }
+        }, err -> Toast.makeText(SignUpActivity.this, err.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     @Override
@@ -307,36 +294,6 @@ public class SignUpActivity extends BaseActivity implements ISignUpView {
         Glide.with(this).load(url).into(ivAvatar);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void addPermission(List<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            permissionsList.add(permission);
-            shouldShowRequestPermissionRationale(permission);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case READ_WRITE_EXTERNAL:
-                Map<String, Integer> perms = new HashMap<>();
-                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                for (int i = 0; i < permissions.length; i++)
-                    perms.put(permissions[i], grantResults[i]);
-                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    selectAvatar();
-                } else {
-                    Toast.makeText(this, "Some permissions are denied", Toast.LENGTH_SHORT)
-                            .show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                break;
-        }
-    }
 }
 
 

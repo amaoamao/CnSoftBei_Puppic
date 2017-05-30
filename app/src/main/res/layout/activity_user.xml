@@ -65,6 +65,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="800dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical"
             android:paddingTop="16dp">
 
@@ -115,7 +118,13 @@
                     android:inputType="text"
                     tools:text="Name" />
             </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_preferences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
+
 
     </android.support.v4.widget.NestedScrollView>
 

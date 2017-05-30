@@ -157,4 +157,7 @@
     <string name="personal_info">个人资料</string>
     <string name="user_name">用户名</string>
     <string name="phone_number">手机号</string>
+    <string name="updating">正在更新</string>
+    <string name="permission_denied">权限申请失败</string>
+    <string name="credit_his">积分流水</string>
 </resources>

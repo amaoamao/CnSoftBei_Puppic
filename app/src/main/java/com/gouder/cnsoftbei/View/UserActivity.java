@@ -20,6 +20,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,12 +31,17 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.gouder.cnsoftbei.Adapter.PreferenceListAdapter;
 import com.gouder.cnsoftbei.ApplicationComponent;
 import com.gouder.cnsoftbei.BaseActivity;
 import com.gouder.cnsoftbei.Presenter.IUserPresenter;
 import com.gouder.cnsoftbei.Presenter.UserPresenter;
 import com.gouder.cnsoftbei.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +58,9 @@ public class UserActivity extends BaseActivity implements IUserView {
     EditText etUsername;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.rv_preferences)
+    RecyclerView rvPreferences;
+    private MaterialDialog progressDialog;
 
 
     @Override
@@ -61,6 +72,8 @@ public class UserActivity extends BaseActivity implements IUserView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new UserPresenter(this);
         initBars();
+        rvPreferences.setAdapter(new PreferenceListAdapter(new ArrayList<>(), new ArrayList<>()));
+        rvPreferences.setLayoutManager(new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false));
         presenter.init();
     }
 
@@ -113,7 +126,7 @@ public class UserActivity extends BaseActivity implements IUserView {
     }
 
     @Override
-    public void enableEditTexts(boolean enabled) {
+    public void setEditTextsEnabled(boolean enabled) {
         etUsername.setEnabled(enabled);
     }
 
@@ -136,4 +149,40 @@ public class UserActivity extends BaseActivity implements IUserView {
     public void setUsername(String username) {
         etUsername.setText(username);
     }
+
+    @Override
+    public void showProgress(boolean show) {
+        if (progressDialog == null) {
+            progressDialog = new MaterialDialog.Builder(this).cancelable(false).title(R.string.updating).content(R.string.wait).progress(true, 100).build();
+        }
+        if (show) {
+            progressDialog.show();
+        } else {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void setCheckBoxEnabled(boolean enabled) {
+        ((PreferenceListAdapter) rvPreferences.getAdapter()).setCheckBoxEnabled(enabled);
+        rvPreferences.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void setCheckBoxSelected(List<String> selected) {
+        List<String> preferList = ((PreferenceListAdapter) rvPreferences.getAdapter()).getSelected();
+        preferList.clear();
+        preferList.addAll(selected);
+        rvPreferences.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void setCheckBoxs(List<String> boxes) {
+        List<String> preferList = ((PreferenceListAdapter) rvPreferences.getAdapter()).getPreferList();
+        preferList.clear();
+        preferList.addAll(boxes);
+        rvPreferences.getAdapter().notifyDataSetChanged();
+    }
+
+
 }

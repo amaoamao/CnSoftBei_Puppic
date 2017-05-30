@@ -17,30 +17,32 @@
 package com.gouder.cnsoftbei.View;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import com.gouder.cnsoftbei.R;
+import com.gouder.cnsoftbei.Widget.StackLayout;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class DashboardFragment extends Fragment {
+    @BindView(R.id.stack_img)
+    StackLayout stackImg;
+    Unbinder unbinder;
 
-//    private OnFragmentInteractionListener mListener;
 
     public DashboardFragment() {
-        // Required empty public constructor
     }
 
     public static DashboardFragment newInstance() {
-        DashboardFragment fragment = new DashboardFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
+        return new DashboardFragment();
     }
 
 
@@ -52,37 +54,58 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        final StackAdapter stackAdapter = new StackAdapter(getContext());
+        stackAdapter.add("1");
+        stackAdapter.add("2");
+        stackAdapter.add("3");
+        stackAdapter.add("4");
+        stackAdapter.add("5");
+        stackAdapter.add("6");
+        stackAdapter.add("7");
+        stackImg.setAdapter(stackAdapter);
+        return view;
     }
 
-
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
+    public class StackAdapter extends ArrayAdapter {
+
+        public StackAdapter(Context context) {
+            super(context, R.layout.item_stack);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, final View convertView, @NonNull final ViewGroup parent) {
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_stack, parent, false);
+            }
+            final String name = (String) getItem(position);
+//            ((TextView) view.findViewById(R.id.name)).setText(name);
+            final View completeView = view.findViewById(R.id.complete);
+            view.setTag(name);
+            completeView.setOnClickListener(v -> stackImg.removeViewWithAnim(convertView, false));
+            return view;
+        }
+    }
 }

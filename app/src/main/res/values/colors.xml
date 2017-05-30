@@ -26,4 +26,5 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorHalfTransparent">#33000000</color>
     <color name="colorPink">#e91e63</color>
+    <color name="colorBlackTransparent">#99000000</color>
 </resources>

@@ -20,6 +20,7 @@ import com.gouder.cnsoftbei.APIService.APIUrl;
 import com.gouder.cnsoftbei.APIService.ImgurService;
 import com.gouder.cnsoftbei.APIService.LogIn.LogInService;
 import com.gouder.cnsoftbei.APIService.SignUp.SignUpService;
+import com.gouder.cnsoftbei.APIService.UserProfileService;
 import com.gouder.cnsoftbei.Model.User;
 
 import javax.inject.Singleton;
@@ -53,6 +54,12 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
+    UserProfileService provideUserProfileService(Retrofit.Builder retrofit) {
+        return retrofit.build().create(UserProfileService.class);
+    }
+
+    @Provides
+    @Singleton
     Interceptor provideInterceptor() {
         return new LoggingInterceptor();
     }
@@ -72,8 +79,8 @@ public class ApplicationModule {
     @Provides
     @Singleton
     User provideUser() {
-        return new User("amaoamao", "17761302891", "123123", "male", "http://i.imgur.com/u6lTeOV.jpg");
-//        return new User();
+//        return new User("amaoamao", "17761302891", "123123", "male", "http://i.imgur.com/u6lTeOV.jpg");
+        return new User();
     }
 
 }
